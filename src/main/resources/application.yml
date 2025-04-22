@@ -1,0 +1,25 @@
+server:
+  port: 7777 # Puerto donde se levantará el config-server (por defecto será http://localhost:7777)
+
+spring:
+  profiles:
+    active: dev # Activa el perfil "default" (si quieres cambiar entre dev/prod, modificas esto)
+  application:
+    name: config-server # Nombre de la aplicación para registrar en Eureka y para identificarla
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/pablo1903bin/microservice-configs.git # Dirección del repositorio Git que contiene las configuraciones
+          default-label: main # Rama por defecto que usará para leer las configuraciones (puedes cambiar a dev, prod, etc. si quieres)
+          clone-on-start: true # Clona el repositorio completo cuando arranca el config-server para leer las configuraciones localmente
+          username: ${GIT_USER} # Nombre de usuario para autenticarse en GitHub (si el repo es privado)
+          password: ${GIT_TOKEN} # Password o token de autenticación de GitHub (se toma de variables de entorno para seguridad)
+
+eureka:
+  instance:
+    instance-id: "${spring.application.name}:${random.value}" # Identificador único para registrar esta instancia en Eureka
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # URL del servidor Eureka donde se registrará este config-server
